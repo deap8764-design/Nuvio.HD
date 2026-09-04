@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Brand.Hd - streaming video landing page">
+  <title>Vizytop.Hd</title>
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --surface:#f7f7f7;
+      --surface-2:#f1f1f1;
+      --text:#111111;
+      --muted:#666666;
+      --line:rgba(0,0,0,.10);
+      --accent:#ffffff;
+      --radius:18px;
+      --max-width:760px;
+    }
+
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    html{
+      scroll-behavior:smooth;
+      background:var(--bg);
+    }
+
+    body{
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(0,0,0,.035), transparent 34rem),
+        var(--bg);
+      color:var(--text);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    button,
+    input{
+      font:inherit;
+    }
+
+    .page{
+      width:min(100%,var(--max-width));
+      margin:0 auto;
+      padding:18px 14px 28px;
+    }
+
+    /* Header */
+    .brand{
+      min-height:104px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:7px 18px;
+      border:1px solid var(--line);
+      border-radius:40px;
+      background:
+        linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.015)),
+        rgba(0,0,0,.28);
+      box-shadow:0 18px 60px rgba(0,0,0,.22);
+    }
+
+    .brand h1{
+      font-size:clamp(34px,10vw,60px);
+      line-height:.95;
+      letter-spacing:-.065em;
+      font-weight:850;
+    }
+
+    .brand h1 span{
+      opacity:.45;
+    }
+
+    .description{
+      margin:14px 4px 0;
+      padding:18px 18px 17px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:rgba(0,0,0,.025);
+    }
+
+    .description h2{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      color:var(--muted);
+      margin-bottom:7px;
+    }
+
+    .description p{
+      color:#444;
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    /* Video */
+    .player-card{
+      margin-top:18px;
+      overflow:hidden;
+      border-radius:var(--radius);
+      border:1px solid var(--line);
+      background:#000;
+      box-shadow:0 24px 70px rgba(0,0,0,.38);
+    }
+
+    .video-shell{
+      position:relative;
+      width:min(100%, 430px);
+      margin:0 auto;
+      aspect-ratio:9 / 16;
+      background:#000;
+      overflow:hidden;
+    }
+
+    video{
+      display:block;
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      background:#000;
+    }
+
+    /*
+      TRANSPARENT SMARTLINK CLICK TRAP
+      --------------------------------
+      Saat active=true, overlay menutupi 100% area player.
+      Overlay transparan sehingga video tetap terlihat.
+    */
+    .ad-trap{
+      position:absolute;
+      inset:0;
+      z-index:20;
+      background:transparent;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    .ad-trap[hidden]{
+      display:none;
+    }
+
+    .cooldown{
+      position:absolute;
+      z-index:30;
+      left:50%;
+      bottom:14px;
+      transform:translateX(-50%);
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:999px;
+      background:rgba(0,0,0,.68);
+      backdrop-filter:blur(12px);
+      color:#e8e8e8;
+      font-size:11px;
+      white-space:nowrap;
+      pointer-events:none;
+    }
+
+    .cooldown[hidden]{
+      display:none;
+    }
+
+    .dot{
+      width:6px;
+      height:6px;
+      border-radius:50%;
+      background:#fff;
+      opacity:.8;
+    }
+
+    /* Video info */
+    .video-info{
+      padding:15px 16px 17px;
+      background:#f7f7f7;
+    }
+
+    .video-title{
+      font-size:18px;
+      font-weight:750;
+      letter-spacing:-.025em;
+    }
+
+    .video-meta{
+      margin-top:5px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    /* Small mobile */
+    @media (max-width:390px){
+      .page{
+        padding-left:10px;
+        padding-right:10px;
+      }
+
+      .brand{
+        min-height:25px;
+      }
+
+      .description{
+        padding:10px;
+      }
+
+      .video-info{
+        padding:13px 14px 15px;
+      }
+    }
+
+    /* Tablet / desktop */
+    @media (min-width:700px){
+      .page{
+        padding-top:28px;
+      }
+
+      .brand{
+        min-height:170px;
+      }
+
+      .description{
+        padding:20px;
+      }
+
+      .video-info{
+        padding:18px 20px;
+      }
+
+      .cards{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+      }
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion:reduce){
+      html{
+        scroll-behavior:auto;
+      }
+    }
+  </style>
+  <script>(function(s){s.dataset.zone='11724989',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+</head>
+
+<body>
+  <main class="page">
+
+    <header class="brand">
+      <h1>Vizytop<span>.Hd</span></h1>
+    </header>
+
+    <section class="description" aria-label="Keterangan">
+      <h2>Keterangan</h2>
+      <p>
+        Nikmati video favorit kamu.
+      </p>
+    </section>
+
+    <section class="player-card" aria-label="Video player">
+      <div class="video-shell" id="videoShell">
+
+        <!--
+          GANTI URL VIDEO DI BAWAH.
+          Contoh:
+          https://domain-kamu.com/video/movie.mp4
+        -->
+        <video
+          id="videoPlayer"
+          controls
+          playsinline
+          preload="metadata"
+          poster=""
+        >
+          <source id="videoSource" src="../../assets/nnew/VID-20260904-WA0072.mp4" type="video/mp4">
+          Browser kamu tidak mendukung HTML5 video.
+        </video>
+
+        <!--
+          SMARTLINK CLICK TRAP
+          Transparan dan memenuhi seluruh area player.
+          Saat aktif, satu klik pada area player akan membuka Smartlink.
+        -->
+        <div
+          id="adTrap"
+          class="ad-trap"
+          role="button"
+          aria-label="Lanjutkan menonton"
+          title="Klik untuk melanjutkan"
+        ></div>
+
+        <!-- Status jeda 10 detik -->
+        <div id="cooldownBadge" class="cooldown" hidden>
+          <span class="dot"></span>
+          <span> <b id="countdown">10</b> second</span>          
+        </div>
+      </div>
+
+    </section>
+
+    <footer>
+      ©2026
+    </footer>
+
+  </main>
+
+  <script>
+    /*
+      ============================================================
+      CONFIG
+      ============================================================
+    */
+
+    const CONFIG = {
+      // GANTI DENGAN URL SMARTLINK KAMU
+      smartlinkUrl: "https://omg10.com/4/11724991",
+
+      // Jeda antar klik iklan
+      adCooldown: 10000,
+
+      // Buka Smartlink di tab baru.
+      // true = tab baru
+      // false = tab yang sama
+      openInNewTab: true
+    };
+
+    /*
+      ============================================================
+      ELEMENTS
+      ============================================================
+    */
+
+    const video = document.getElementById("videoPlayer");
+    const adTrap = document.getElementById("adTrap");
+    const cooldownBadge = document.getElementById("cooldownBadge");
+    const countdown = document.getElementById("countdown");
+
+    /*
+      ============================================================
+      STATE
+      ============================================================
+    */
+
+    let lastAdTime = 0;
+    let cooldownTimer = null;
+
+    /*
+      ============================================================
+      SMARTLINK
+      ============================================================
+    */
+
+    function canTriggerAd() {
+      return Date.now() - lastAdTime >= CONFIG.adCooldown;
+    }
+
+    function openSmartlink() {
+      if (!CONFIG.smartlinkUrl || CONFIG.smartlinkUrl === "SMARTLINK_URL_KAMU") {
+        console.warn("Smartlink belum diisi. Ganti CONFIG.smartlinkUrl terlebih dahulu.");
+        return false;
+      }
+
+      const target = CONFIG.openInNewTab ? "_blank" : "_self";
+
+      const adWindow = window.open(
+        CONFIG.smartlinkUrl,
+        target,
+        "noopener,noreferrer"
+      );
+
+      /*
+        Jika browser memblokir popup, kita tetap menganggap
+        klik sudah dikonsumsi agar cooldown berjalan normal.
+      */
+      return adWindow !== null;
+    }
+
+    /*
+      ============================================================
+      COOLDOWN 10 DETIK
+      ============================================================
+    */
+
+    function startCooldown() {
+      lastAdTime = Date.now();
+
+      // Selama cooldown, trap dihilangkan.
+      // User dapat menggunakan kontrol video secara normal.
+      adTrap.hidden = true;
+
+      cooldownBadge.hidden = false;
+
+      let remaining = Math.ceil(CONFIG.adCooldown / 1000);
+      countdown.textContent = remaining;
+
+      clearInterval(cooldownTimer);
+
+      cooldownTimer = setInterval(() => {
+        remaining -= 1;
+
+        if (remaining <= 0) {
+          clearInterval(cooldownTimer);
+          cooldownTimer = null;
+
+          cooldownBadge.hidden = true;
+
+          // Aktifkan kembali click trap.
+          adTrap.hidden = false;
+          return;
+        }
+
+        countdown.textContent = remaining;
+      }, 1000);
+    }
+
+    /*
+      ============================================================
+      CLICK TRAP
+      ============================================================
+
+      Alur:
+      1. Halaman dibuka.
+      2. Trap aktif dan transparan.
+      3. User klik area video.
+      4. Smartlink dibuka.
+      5. Cooldown 10 detik dimulai.
+      6. Trap mati selama 10 detik.
+      7. Video player dapat dipakai normal.
+      8. Setelah 10 detik trap aktif kembali.
+    */
+
+    adTrap.addEventListener("click", function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!canTriggerAd()) {
+        return;
+      }
+
+      openSmartlink();
+      startCooldown();
+    });
+
+    /*
+      ============================================================
+      OPTIONAL: KLIK VIDEO PLAYER SAAT COOLDOWN
+      ============================================================
+
+      Tidak ada intervensi di sini.
+      Karena trap hidden, native controls dan video player
+      berjalan normal selama 10 detik.
+    */
+
+    /*
+      ============================================================
+      VIDEO ERROR MESSAGE
+      ============================================================
+    */
+
+    video.addEventListener("error", () => {
+      console.warn(
+        "Video gagal dimuat. Pastikan VIDEO_URL_KAMU.mp4 sudah diganti dengan URL video yang valid."
+      );
+    });
+
+    /*
+      ============================================================
+      INITIAL STATE
+      ============================================================
+
+      Trap sengaja aktif sejak halaman pertama dibuka.
+    */
+
+    adTrap.hidden = false;
+  </script>
+</body>
+</html>
